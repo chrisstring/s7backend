@@ -8,6 +8,7 @@ This interface handles most of the functions
 
 - [ ] Build authUser
 >  authUser accepts user credentials and verifies them with scene7's verification system
+
 - [ ] Build readCSV function
 > readCSV will use the built in csv reader module to read a CSV of skus that need to be searched.  Each sku is then passed to the singleSkuSearch function
 
