@@ -6,13 +6,13 @@ This interface handles most of the functions
 
 **To Do:**
 
-- [ ] Build authUser
+- [x] Build authUser
 >  authUser accepts user credentials and verifies them with scene7's verification system
-
+s
 - [ ] Build readCSV function
 > readCSV will use the built in csv reader module to read a CSV of skus that need to be searched.  Each sku is then passed to the singleSkuSearch function
 
-- [ ] Build singleSkuSearch function
+- [ ] Build SkuSearch function
 > singleSkuSearch receives a single SKU from the readCSV function and passes it in the SOAP object which then receives an XML array of data back.
 
 - [ ] Build readResultsArray
