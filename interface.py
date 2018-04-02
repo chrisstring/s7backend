@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 #   interface.py
+#   pip3 install lxml
+#   sudo apt-get install python3-lxml
+#
 #   utilizes the SOAP1.2 bindings, we should see w3...2003/05 in the namespace
 #   Interacts with scene7's backend to automate the process of finding assets, getting their size, ading them to a job queue
 #   where the size < 1GB total and sending the jobs out for downloading.
@@ -10,6 +13,7 @@
 
 
 import requests, csv, os, getpass, xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup
 url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
 
 companyHandle = "c|8676"
@@ -76,7 +80,23 @@ def modifiedSkuSearch(sku):
     for alt in range(1,16):
         payload_alts+="<ns:items>{}_alt{}</ns:items>\r\n".format(sku,alt)
 
-    payload_body = "</ns:nameArray>\r\n<ns:responseFieldArray>\r\n<ns:items>assetArray/items/name</ns:items>\r\n<ns:items>assetArray/items/lastModified</ns:items>\r\n<ns:items>assetArray/items/lastModifUser</ns:items>\r\n</ns:responseFieldArray>\r\n</ns:getAssetsByNameParam>\r\n </soap:Body>\r\n</soap:Envelope>"
+    #payload_body = "</ns:nameArray>\r\n<ns:responseFieldArray>\r\n<ns:items>assetArray/items/name</ns:items>\r\n<ns:items>assetArray/items/lastModified</ns:items>\r\n<ns:items>assetArray/items/lastModifUser</ns:items>\r\n</ns:responseFieldArray>\r\n</ns:getAssetsByNameParam>\r\n </soap:Body>\r\n</soap:Envelope>"
+
+    payload_body = '''
+    </ns:nameArray>
+        <ns:responseFieldArray>
+            <ns:items>assetArray/items/name</ns:items>
+            <ns:items>assetArray/items/type</ns:items>
+            <ns:items>assetArray/items/lastModified</ns:items>
+            <ns:items>assetArray/items/lastModifUser</ns:items>
+            <ns:items>assetArray/items/assetHandle</ns:items>
+            <ns:items>assetArray/items/fileSize</ns:items>
+            <ns:items>assetArray/items/imageInfo/width</ns:items>
+            <ns:items>assetArray/items/imageInfo/height</ns:items>
+        </ns:responseFieldArray>
+        </ns:getAssetsByNameParam>
+    </soap:Body>
+    </soap:Envelope>'''
     headers = {'soapaction': "getAssetsByName",'cache-control': "no-cache"}
     payload = payload_header+payload_main+payload_alts + payload_body
 
@@ -84,7 +104,35 @@ def modifiedSkuSearch(sku):
     response = requests.request("POST", url, data=payload, headers=headers)
 
     responseRoot = ET.fromstring(response.text)
-    print("This is response:\r\n"+response.text)
+    print("ResponseRoot:"+responseRoot.tag)
+    #print("This is response:\r\n"+response.text)
+    assetArray = responseRoot[0][0][0]
+    print("assetArray: "+assetArray.tag)
+    for item in assetArray: #these are each of the items inside the asset array return
+        for tag in item:
+            print("<"+tag.tag+">",tag.text)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
