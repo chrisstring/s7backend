@@ -5,6 +5,7 @@
 #   where the size < 1GB total and sending the jobs out for downloading.
 #
 #   XML content and exports from s7 need to be handled in the RAW not in the converted text. so response.content is the way to go
+#   trueLogin is currently disabled
 
 
 
@@ -17,9 +18,16 @@ masterP = "Password2#"
 loggedIn = False
 sessionId = ""
 skuList = []
+loggedUser=""
+loggedPass=""
+
+#===========
+
+
 
 #   authUser accepts username and password
 def authUser(uname,pwd):
+    global loggedUser,loggedPass
 #    payload = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns=\"http://www.scene7.com/IpsApi/xsd/2014-04-03\">\r\n <soap:Header>\r\n <ns:authHeader>\r\n <!--Optional:-->\r\n <ns:user>{}</ns:user>\r\n <!--Optional:-->\r\n <ns:password>{}</ns:password>\r\n <ns:appName>bertz</ns:appName>\r\n <ns:appVersion>69</ns:appVersion>\r\n </ns:authHeader>\r\n </soap:Header>\r\n <soap:Body>\r\n <ns:checkLoginParam>\r\n <!--Optional:-->\r\n <ns:companyHandle>c|8676</ns:companyHandle>\r\n <ns:email>{}</ns:email>\r\n <ns:password>{}</ns:password>\r\n </ns:checkLoginParam>\r\n </soap:Body>\r\n</soap:Envelope>".format(masterU,masterP,uname,pwd)
 #    headers = {'soapaction': "checkLogin",'cache-control': "no-cache"}
 
@@ -28,7 +36,12 @@ def authUser(uname,pwd):
 #   XML content and exports from scene7 payloads should be dealt with in the raw.
 
 #    responseRoot = ET.fromstring(response.text)
+
+
+
     if uname=="chris.string@turn5.com" and pwd == "Password2#":
+        loggedUser= uname
+        loggedPass = pwd
         return True
     else:
         return False
@@ -54,13 +67,23 @@ def readCSV(filename):
 
 #   singleSkuSearch uses getAssetsByName
 def singleSkuSearch(sku):
-    #todo write rest of function
-    print("searching s7 for: ",sku)
+    global loggedUser, loggedPass
+    url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
+    print("searching s7 for: [{}] family".format(sku))
+    payload_header="<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns=\"http://www.scene7.com/IpsApi/xsd/2014-04-03\">\r\n <soap:Header>\r\n <ns:authHeader>\r\n <!--Optional:-->\r\n <ns:user>{}</ns:user>\r\n <!--Optional:-->\r\n <ns:password>{}</ns:password>\r\n <ns:appName>bertz</ns:appName>\r\n <ns:appVersion>7</ns:appVersion>\r\n </ns:authHeader>\r\n </soap:Header>\r\n <soap:Body>\r\n <ns:getAssetsByNameParam>\r\n<ns:companyHandle>c|8676</ns:companyHandle>\r\n <ns:nameArray>\r\n".format(loggedUser,loggedPass)
+
+    payload_body = "<ns:items>T533729</ns:items>\r\n <ns:items>T533729_alt1</ns:items>\r\n\t <ns:items>T533729_hjk</ns:items>\r\n </ns:nameArray>\r\n </ns:getAssetsByNameParam>\r\n </soap:Body>\r\n</soap:Envelope>"
+    headers = {'soapaction': "getAssetsByName",'cache-control': "no-cache"}
+    payload = payload_header + payload_body
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+    responseRoot = ET.fromstring(response.text)
+
 
 
 #======================= BEGIN TESTING HERE =============================
 
-print("\t\t===Welcome to the Super Sweet Scene 7 Stuff Script===")
+print("\t\t===Welcome to the Super Sweet Scene 7 Stuff Script (developer mode)===")
 while loggedIn==False:
     print("Please provide your Scene 7 login credentials")
     inputUser = input("user email: ")
@@ -71,3 +94,6 @@ while loggedIn==False:
         loggedIn=True
     else:
         print("Credential check: FAIL")
+
+
+singleSkuSearch("T533729")
