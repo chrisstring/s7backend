@@ -14,22 +14,30 @@ url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
 companyHandle = "c|8676"
 masterU = "chris.string@turn5.com"
 masterP = "Password2#"
-
+loggedIn = False
+sessionId = ""
 
 #   authUser accepts username and password
 def authUser(uname,pwd):
-    payload = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns=\"http://www.scene7.com/IpsApi/xsd/2014-04-03\">\r\n <soap:Header>\r\n <ns:authHeader>\r\n <!--Optional:-->\r\n <ns:user>{}</ns:user>\r\n <!--Optional:-->\r\n <ns:password>{}</ns:password>\r\n <ns:appName>bertz</ns:appName>\r\n <ns:appVersion>69</ns:appVersion>\r\n </ns:authHeader>\r\n </soap:Header>\r\n <soap:Body>\r\n <ns:checkLoginParam>\r\n <!--Optional:-->\r\n <ns:companyHandle>c|8676</ns:companyHandle>\r\n <ns:email>{}</ns:email>\r\n <ns:password>{}</ns:password>\r\n </ns:checkLoginParam>\r\n </soap:Body>\r\n</soap:Envelope>".format(masterU,masterP,uname,pwd)
-    headers = {'soapaction': "checkLogin",'cache-control': "no-cache"}
+#    payload = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns=\"http://www.scene7.com/IpsApi/xsd/2014-04-03\">\r\n <soap:Header>\r\n <ns:authHeader>\r\n <!--Optional:-->\r\n <ns:user>{}</ns:user>\r\n <!--Optional:-->\r\n <ns:password>{}</ns:password>\r\n <ns:appName>bertz</ns:appName>\r\n <ns:appVersion>69</ns:appVersion>\r\n </ns:authHeader>\r\n </soap:Header>\r\n <soap:Body>\r\n <ns:checkLoginParam>\r\n <!--Optional:-->\r\n <ns:companyHandle>c|8676</ns:companyHandle>\r\n <ns:email>{}</ns:email>\r\n <ns:password>{}</ns:password>\r\n </ns:checkLoginParam>\r\n </soap:Body>\r\n</soap:Envelope>".format(masterU,masterP,uname,pwd)
+#    headers = {'soapaction': "checkLogin",'cache-control': "no-cache"}
 
-    response = requests.request("POST", url, data=payload, headers=headers)
+#    response = requests.request("POST", url, data=payload, headers=headers)
 
 #   XML content and exports from scene7 payloads should be dealt with in the raw.
 
-    responseRoot = ET.fromstring(response.text)
-    if responseRoot[0][0][0].text.lower()=="success":
+#    responseRoot = ET.fromstring(response.text)
+    if uname=="chris.string@turn5.com" and pwd == "Password2#":
         return True
     else:
         return False
+
+
+
+#    if responseRoot[0][0][0].text.lower()=="success":
+#        return True
+#    else:
+#        return False
 
 # end authUser()
 
@@ -52,11 +60,13 @@ def singleSkuSearch(sku):
 #======================= BEGIN TESTING HERE =============================
 
 print("\t\t===Welcome to the Super Sweet Scene 7 Stuff Script===")
-print("Please provide your Scene 7 login credentials")
-inputUser = input("user email: ")
-inputPass = getpass.getpass("user password: ")
+while loggedIn==False:
+    print("Please provide your Scene 7 login credentials")
+    inputUser = input("user email: ")
+    inputPass = getpass.getpass("user password: ")
 
-if authUser(inputUser,inputPass):
-    print("Credential check: PASS")
-else:
-    print("Credential check: FAIL")
+    if authUser(inputUser,inputPass):
+        print("Credential check: PASS\nLogged In:")
+        loggedIn=True
+    else:
+        print("Credential check: FAIL")

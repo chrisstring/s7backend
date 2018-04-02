@@ -12,6 +12,9 @@ This interface handles most of the functions
 - [x] Build readCSV function
 > readCSV will use the built in csv reader module to read a CSV of skus that need to be searched.  Each sku is then passed to the singleSkuSearch function
 
+- [ ] Build displayMenu
+> displayMenu should hold a rudimentary menu that offers to show searchQueue, jobQueue
+
 - [ ] Build skuSearch function
 > singleSkuSearch receives a single SKU from the readCSV function and passes it in the SOAP object which then receives an XML array of data back.
 
