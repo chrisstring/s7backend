@@ -16,6 +16,7 @@ masterU = "chris.string@turn5.com"
 masterP = "Password2#"
 loggedIn = False
 sessionId = ""
+skuList = []
 
 #   authUser accepts username and password
 def authUser(uname,pwd):
