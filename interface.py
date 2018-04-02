@@ -64,6 +64,29 @@ def readCSV(filename):
         for row in readCSV:
             singleSkuSearch(row[0])
 
+#================================
+#BEGIN SEARCH family
+def modifiedSkuSearch(sku):
+    global loggedUser, loggedPass
+    url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
+    print("searching s7 for: [{}] family".format(sku))
+    payload_header="<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns=\"http://www.scene7.com/IpsApi/xsd/2014-04-03\">\r\n <soap:Header>\r\n <ns:authHeader>\r\n <!--Optional:-->\r\n <ns:user>{}</ns:user>\r\n <!--Optional:-->\r\n <ns:password>{}</ns:password>\r\n <ns:appName>bertz</ns:appName>\r\n <ns:appVersion>7</ns:appVersion>\r\n </ns:authHeader>\r\n </soap:Header>\r\n <soap:Body>\r\n <ns:getAssetsByNameParam>\r\n<ns:companyHandle>c|8676</ns:companyHandle>\r\n <ns:nameArray>\r\n".format(loggedUser,loggedPass)
+    payload_main ="<ns:items>{}</ns:items>\r\n".format(sku)
+    payload_alts = ""
+    for alt in range(1,16):
+        payload_alts+="<ns:items>{}_alt{}</ns:items>\r\n".format(sku,alt)
+
+    payload_body = "</ns:nameArray>\r\n<ns:responseFieldArray>\r\n<ns:items>assetArray/items/name</ns:items>\r\n<ns:items>assetArray/items/lastModified</ns:items>\r\n<ns:items>assetArray/items/lastModifUser</ns:items>\r\n</ns:responseFieldArray>\r\n</ns:getAssetsByNameParam>\r\n </soap:Body>\r\n</soap:Envelope>"
+    headers = {'soapaction': "getAssetsByName",'cache-control': "no-cache"}
+    payload = payload_header+payload_main+payload_alts + payload_body
+
+#    print("This is payload\r\n"+payload)
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+    responseRoot = ET.fromstring(response.text)
+    print("This is response:\r\n"+response.text)
+
+
 
 #   singleSkuSearch uses getAssetsByName
 def singleSkuSearch(sku):
@@ -71,15 +94,20 @@ def singleSkuSearch(sku):
     url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
     print("searching s7 for: [{}] family".format(sku))
     payload_header="<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ns=\"http://www.scene7.com/IpsApi/xsd/2014-04-03\">\r\n <soap:Header>\r\n <ns:authHeader>\r\n <!--Optional:-->\r\n <ns:user>{}</ns:user>\r\n <!--Optional:-->\r\n <ns:password>{}</ns:password>\r\n <ns:appName>bertz</ns:appName>\r\n <ns:appVersion>7</ns:appVersion>\r\n </ns:authHeader>\r\n </soap:Header>\r\n <soap:Body>\r\n <ns:getAssetsByNameParam>\r\n<ns:companyHandle>c|8676</ns:companyHandle>\r\n <ns:nameArray>\r\n".format(loggedUser,loggedPass)
+    payload_main ="<ns:items>{}</ns:items>\r\n".format(sku)
+    payload_alts = ""
+    for alt in range(1,16):
+        payload_alts+="<ns:items>{}_alt{}</ns:items>\r\n".format(sku,alt)
 
-    payload_body = "<ns:items>T533729</ns:items>\r\n <ns:items>T533729_alt1</ns:items>\r\n\t <ns:items>T533729_hjk</ns:items>\r\n </ns:nameArray>\r\n </ns:getAssetsByNameParam>\r\n </soap:Body>\r\n</soap:Envelope>"
+    payload_body = "</ns:nameArray>\r\n </ns:getAssetsByNameParam>\r\n </soap:Body>\r\n</soap:Envelope>"
     headers = {'soapaction': "getAssetsByName",'cache-control': "no-cache"}
-    payload = payload_header + payload_body
+    payload = payload_header+payload_main+payload_alts + payload_body
+
+#    print("This is payload\r\n"+payload)
     response = requests.request("POST", url, data=payload, headers=headers)
 
     responseRoot = ET.fromstring(response.text)
-
-
+    print("This is response:\r\n"+response.text)
 
 #======================= BEGIN TESTING HERE =============================
 
@@ -96,4 +124,4 @@ while loggedIn==False:
         print("Credential check: FAIL")
 
 
-singleSkuSearch("T533729")
+modifiedSkuSearch("T533729")
