@@ -15,7 +15,7 @@ This interface handles most of the functions
 - [ ] Build displayMenu
 > displayMenu should hold a rudimentary menu that offers to show searchQueue, jobQueue
 
-- [ ] Build skuSearch function
+- [x] Build skuSearch function
 > singleSkuSearch receives a single SKU from the readCSV function and passes it in the SOAP object which then receives an XML array of data back.
 
 - [ ] Build readResultsArray
