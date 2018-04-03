@@ -104,13 +104,13 @@ def modifiedSkuSearch(sku):
     response = requests.request("POST", url, data=payload, headers=headers)
 
     responseRoot = ET.fromstring(response.text)
-    print("ResponseRoot:"+responseRoot.tag)
-    #print("This is response:\r\n"+response.text)
-    assetArray = responseRoot[0][0][0]
-    print("assetArray: "+assetArray.tag)
-    for item in assetArray: #these are each of the items inside the asset array return
-        for tag in item:
-            print("<"+tag.tag+">",tag.text)
+#    print("ResponseRoot:"+responseRoot.tag)
+    print("This is response:\r\n"+response.text)
+#    assetArray = responseRoot[0][0][0]
+#    print("assetArray: "+assetArray.tag)
+#    for item in assetArray: #these are each of the items inside the asset array return
+#        for tag in item:
+#            print("<"+tag.tag+">",tag.text)
 
 
 
