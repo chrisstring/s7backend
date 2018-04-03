@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 # test the emergency XML broadcast system
-import xml.etree.ElementTree as ET, lxml
-
-
-sampleXML ='''
-<?xml version='1.0' encoding='UTF-8'?>
+from lxml import etree
+print("running with lxml.etree")
+sampleXML ='''<?xml version='1.0' encoding='UTF-8'?>
     <soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
         <soapenv:Body>
             <getAssetsByNameReturn xmlns="http://www.scene7.com/IpsApi/xsd/2014-04-03">
@@ -54,4 +52,7 @@ sampleXML ='''
     </soapenv:Envelope>'''
 #================= end of xml structure =================
 
-print(sampleXML)
+#print(sampleXML)
+
+root = etree.XML(sampleXML)
+#etree.tostring(root)

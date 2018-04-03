@@ -13,7 +13,7 @@
 
 
 import requests, csv, os, getpass, xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
+from lxml import etree
 url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
 
 companyHandle = "c|8676"
@@ -103,37 +103,8 @@ def modifiedSkuSearch(sku):
 #    print("This is payload\r\n"+payload)
     response = requests.request("POST", url, data=payload, headers=headers)
 
-    responseRoot = ET.fromstring(response.text)
-#    print("ResponseRoot:"+responseRoot.tag)
-    print("This is response:\r\n"+response.text)
-#    assetArray = responseRoot[0][0][0]
-#    print("assetArray: "+assetArray.tag)
-#    for item in assetArray: #these are each of the items inside the asset array return
-#        for tag in item:
-#            print("<"+tag.tag+">",tag.text)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    root = etree.XML(response.content)
+    print(etree.tostring(root))
 
 
 #   singleSkuSearch uses getAssetsByName
