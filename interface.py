@@ -88,9 +88,9 @@ def modifiedSkuSearch(sku):
             <ns:items>assetArray/items/name</ns:items>
             <ns:items>assetArray/items/type</ns:items>
             <ns:items>assetArray/items/lastModified</ns:items>
-            <ns:items>assetArray/items/lastModifUser</ns:items>
+            <ns:items>assetArray/items/lastModifyUser</ns:items>
             <ns:items>assetArray/items/assetHandle</ns:items>
-            <ns:items>assetArray/items/fileSize</ns:items>
+            <ns:items>assetArray/items/imageInfo/fileSize</ns:items>
             <ns:items>assetArray/items/imageInfo/width</ns:items>
             <ns:items>assetArray/items/imageInfo/height</ns:items>
         </ns:responseFieldArray>
