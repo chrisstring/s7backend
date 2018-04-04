@@ -63,14 +63,18 @@ def authUser(uname,pwd):
 
 #   readCSV should accept a CSV file with multiple rows and one column, no headers
 def readCSV(filename):
-    with open('filename', 'r', newline='', encoding='utf-8') as csvfile:
-        readCSV = csv.reader(csvfile)
-        for row in readCSV:
-            singleSkuSearch(row[0])
-
+    #updates skuList
+    #malformed CSV data presents a potential security risk
+    global skuList
+    with open(filename, 'r', newline='', encoding='utf-8') as csvfile:
+        for row in csv.reader(csvfile):
+            skuList.append(row[0])
+        csvfile.close()
+    #print("skuList contents inside of READCSV: ",skuList)
+    return skuList
 #================================
 #BEGIN SEARCH family
-def modifiedSkuSearch(sku):
+def singleSkuSearchMetaData(sku):
     global loggedUser, loggedPass
     url = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService"
     print("searching s7 for: [{}] family".format(sku))
@@ -100,14 +104,31 @@ def modifiedSkuSearch(sku):
     headers = {'soapaction': "getAssetsByName",'cache-control': "no-cache"}
     payload = payload_header+payload_main+payload_alts + payload_body
 
-#    print("This is payload\r\n"+payload)
+    #print("This is payload\r\n"+payload)
     response = requests.request("POST", url, data=payload, headers=headers)
     return response.content
-#================== end modifiedSkuSearch===========
+#================== end singleSkuSearchMetaData===========
+
+def searchSkuMetaData(searchList):
+    _privateMetaList = []
+    if len(searchList)>0:
+        for _sku in searchList:
+            for entry in parseMetaDataResponse(singleSkuSearchMetaData(_sku)):
+                _privateMetaList.append(entry) #add each entry inside of the parseMetaDataResponse function into the private list
+            #end for entry loop
+        #end _sku iteration
+    else:
+        return False
+    return _privateMetaList
+#================== end searchSkuMetaData function=========
+
+
+
 
 #================== begin parseMetaDataResponse=============
 def parseMetaDataResponse(responseXML):
-    print("parseMetaDataResponse function called")
+    #returns a reference to a list
+    #print("parseMetaDataResponse function called")
     # TEST for no items found!
     root = etree.XML(responseXML, etree.XMLParser(remove_blank_text=True))
     #print(etree.dump(root))
@@ -115,7 +136,6 @@ def parseMetaDataResponse(responseXML):
     _skuMetaData = []
     xmlNS = "{"+etree.QName(root[0][0]).namespace+"}"
     for item in assetArray.iter(xmlNS+"items"):
-        #skdsuMetaData.append()
         for child in item.iter():
             if etree.QName(child).localname == "assetHandle":assetHandle=child.text
             if etree.QName(child).localname == "type":assetType=child.text
@@ -126,9 +146,13 @@ def parseMetaDataResponse(responseXML):
             if etree.QName(child).localname == "height":assetHeight=child.text
             if etree.QName(child).localname == "fileSize":assetFileSize=child.text
         _skuMetaData.append([assetHandle,assetType,assetName,assetWidth,assetHeight,assetFileSize,lastModified,lastModifyUser])
-    print("Metadata Parsed, proceed.")
+    print("Metadata Parsed for family, proceed.")
     return _skuMetaData
 #================= end parseMetaDataResponse
+
+
+
+
 
 #======================= BEGIN TESTING HERE =============================
 
@@ -144,6 +168,6 @@ while loggedIn==False:
     else:
         print("Credential check: FAIL")
 
-
-skuArray = parseMetaDataResponse(modifiedSkuSearch("T533729"))
-print("Parsed Response Data:\r\n",*skuArray,sep="\n")
+csv_path = input("Please enter CSV Path (including filename)")
+print(*searchSkuMetaData(readCSV(csv_path)),sep="\n")
+print("this is skuList",skuList)
