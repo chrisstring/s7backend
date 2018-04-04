@@ -145,4 +145,5 @@ while loggedIn==False:
         print("Credential check: FAIL")
 
 
-skuarray = parseMetaDataResponse(modifiedSkuSearch("T533729"))
+skuArray = parseMetaDataResponse(modifiedSkuSearch("T533729"))
+print("Parsed Response Data:\r\n",*skuArray,sep="\n")
