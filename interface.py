@@ -73,6 +73,26 @@ def readCSV(filename):
     #print("skuList contents inside of READCSV: ",skuList)
     return skuList
 #================================
+
+def exportMetaDataToCSV(metaDataList):
+    fileName = input("please enter export filename:")
+    fieldnames = ["asset handle","type","sku","width","height","File Size","Modified","User"]
+    cwd = os.getcwd()
+    if os.path.isdir(os.path.join(cwd,"_csv")):pass
+    else:os.mkdir(os.path.join(cwd,"_csv"))
+    #goindir
+    os.chdir(os.path.join(cwd,"_csv"))
+    with open("{}.csv".format(fileName), 'w',newline='') as csvFile:
+        csvWriter = csv.writer(csvFile)
+        csvWriter.writerow(fieldnames)
+        csvWriter.writerows(metaDataList)
+        csvFile.close()
+    print("MetaData exported to: {}/_csv/{}".format(os.path.dirname(os.path.abspath(__file__)),fileName+"csv"))
+
+
+
+
+
 #BEGIN SEARCH family
 def singleSkuSearchMetaData(sku):
     global loggedUser, loggedPass
@@ -169,5 +189,7 @@ while loggedIn==False:
         print("Credential check: FAIL")
 
 csv_path = input("Please enter CSV Path (including filename)")
-print(*searchSkuMetaData(readCSV(csv_path)),sep="\n")
-print("this is skuList",skuList)
+#print(*searchSkuMetaData(readCSV(csv_path)),sep="\n")
+curMDList = searchSkuMetaData(readCSV(csv_path))
+exportMetaDataToCSV(curMDList)
+print("data written to CSV\r\n",*curMDList,sep="\n")
