@@ -18,7 +18,11 @@ This interface handles most of the functions
 - [x] Build skuSearch function
 > singleSkuSearch receives a single SKU from the readCSV function and passes it in the SOAP object which then receives an XML array of data back.
 
-- [ ] metaDataSearch function
+- [x] Build parseMetaData function
+> parseMetaData accepts responseXML and parses it into a list object for use with other functions
+> - [ ] Check for XML that returns no found results
+
+- [ ] exportMetaData function
 > metaDataSearch function allows the user to pull up data and export to CSV format
 
 - [ ] Build readResultsArray
