@@ -23,7 +23,7 @@ This interface handles most of the functions
 > - [ ] Check for XML that returns no found results
 
 - [ ] exportMetaData function
-> metaDataSearch function allows the user to pull up data and export to CSV format
+> exportMetaData allows the user to pull up data and export to CSV format for pivoting, etc
 
 - [ ] Build readResultsArray
 > readResultsArray accepts the XML data array back and parses through it to get all of the relevant asset names back (may return a tuple of tuples or an array).  readResultsArray will then iterate through each of the assets (J100109 -> J100109_alt1, etc) calling on addToQueue to check the current queue size
